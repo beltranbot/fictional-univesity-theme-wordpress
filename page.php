@@ -28,15 +28,26 @@ while (have_posts()) {
     </div>
     <?php endif; ?>
 
-    <!--
+    <?php $testArray = get_pages(Array(
+      "child_of" => get_the_ID()
+    )); ?>
+    <?php if ($parent_id || $testArray): ?>
     <div class="page-links">
-      <h2 class="page-links__title"><a href="#">About Us</a></h2>
+      <h2 class="page-links__title"><a href="<?php get_permalink($parent_id); ?>"><?php echo get_the_title($parent_id); ?></a></h2>
       <ul class="min-list">
-        <li class="current_page_item"><a href="#">Our History</a></li>
-        <li><a href="#">Our Goals</a></li>
+        <?php if ($parent_id) { 
+          $findChildrenOf = $parent_id;
+        } else {
+          $findChildrenOf = get_the_ID();
+        } ?>
+        <?php wp_list_pages(Array(
+          "title_li" => null,
+          "child_of" => $findChildrenOf,
+          "sort_column" => "menu_order"
+        )); ?>
       </ul>
     </div>
-    -->
+    <?php endif; ?>
 
     <div class="generic-content">
       <?php the_content(); ?>
