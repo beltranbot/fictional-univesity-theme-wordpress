@@ -10,8 +10,28 @@
 </div>
 
 <div class="container container--narrow page-section">
-    <?php while (have_posts()) : ?>
-        <?php the_post(); ?>
+    <?php
+    $today = date("Ymd");
+    $pastEvents = new WP_Query(array(
+        "paged" => get_query_var("paged", 1), // which page
+        // "posts_per_page" => 1,
+        "post_type" => "event",
+        "meta_key" => "event_date", // name of the custom field
+        "orderby" => "meta_value_num", // post_date is the default, rand for random, meta_value alongside meta_key to use custom fields
+        // meta_value for strings
+        "order" => "DESC", // default is DESC
+        "meta_query" => array(
+            array( // bring only upcoming events
+                "key" => "event_date",
+                "compare" => "<",
+                "value" => $today,
+                "type" => "numeric"
+            )
+        )
+    ));
+    ?>
+    <?php while ($pastEvents->have_posts()) : ?>
+        <?php $pastEvents->the_post(); ?>
         <div class="event-summary">
             <a class="event-summary__date t-center" href="<?php the_permalink(); ?>">
                 <?php $event_date = new DateTime(get_field("event_date")); ?>
@@ -24,8 +44,10 @@
             </div>
         </div>
     <?php endwhile; ?>
-    <?php echo paginate_links(); ?>
-    <hr class="section-break">
-    <p>Looking for a recap of past events? <a href="<?php echo site_url("/past-events") ?>">Checkout our past events archive.</a></p>
+    <?php
+    echo paginate_links(array(
+        "total" => $pastEvents->max_num_pages
+    ));
+    ?>
 </div>
 <?php get_footer(); ?>
