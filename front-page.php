@@ -17,7 +17,7 @@
             <?php
             $today = date("Ymd");
             $homepageEvents = new WP_Query(Array(
-                "posts_per_page" => -1, // -1 get all posts that meet the condition
+                "posts_per_page" => 2, // -1 get all posts that meet the condition
                 "post_type" => "event",
                 "meta_key" => "event_date", // name of the custom field
                 "orderby" => "meta_value_num", // post_date is the default, rand for random, meta_value alongside meta_key to use custom fields

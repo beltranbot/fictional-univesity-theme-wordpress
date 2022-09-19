@@ -14,5 +14,35 @@ function university_features()
   add_theme_support("title-tag");
 }
 
+
+
 add_action("wp_enqueue_scripts", "university_files");
 add_action("after_setup_theme", "university_features");
+
+function university_adjust_queries($query)
+{
+  $condition = (!is_admin() &&
+    is_post_type_archive("event") &&
+    $query->is_main_query() // not a custom query
+  );
+  if ($condition) {
+    // first parameter, what we want to change
+    // second parameter, value we want to give it.
+    // $query->set("posts_per_page", '1'):
+    $query->set("meta_key", "event_date");
+    $query->set("orderby", "meta_value_num");
+    $query->set("order", "ASC");
+    $today = date("Ymd");
+    $query->set(
+      "meta_query",
+      array( // bring only upcoming events
+        "key" => "event_date",
+        "compare" => ">=",
+        "value" => $today,
+        "type" => "numeric"
+      )
+    );
+  }
+}
+
+add_action("pre_get_posts", "university_adjust_queries");
