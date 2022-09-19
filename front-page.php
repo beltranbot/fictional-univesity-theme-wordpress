@@ -15,9 +15,22 @@
         <div class="full-width-split__inner">
             <h2 class="headline headline--small-plus t-center">Upcoming Events</h2>
             <?php
-            $homepageEvents = new WP_Query(array(
-                "posts_per_page" => 2,
-                "post_type" => "event"
+            $today = date("Ymd");
+            $homepageEvents = new WP_Query(Array(
+                "posts_per_page" => -1, // -1 get all posts that meet the condition
+                "post_type" => "event",
+                "meta_key" => "event_date", // name of the custom field
+                "orderby" => "meta_value_num", // post_date is the default, rand for random, meta_value alongside meta_key to use custom fields
+                // meta_value for strings
+                "order" => "ASC", // default is DESC
+                "meta_query" => Array(
+                    Array( // bring only upcoming events
+                        "key" => "event_date",
+                        "compare" => ">=",
+                        "value" => $today,
+                        "type" => "numeric"
+                    )
+                )
             ));
             ?>
             <?php while ($homepageEvents->have_posts()) : ?>
