@@ -19,7 +19,7 @@ function university_features()
 add_action("wp_enqueue_scripts", "university_files");
 add_action("after_setup_theme", "university_features");
 
-function university_adjust_queries($query)
+function override_event_archive_query($query)
 {
   $condition = (!is_admin() &&
     is_post_type_archive("event") &&
@@ -43,6 +43,27 @@ function university_adjust_queries($query)
       )
     );
   }
+}
+
+function override_program_archive_query($query)
+{
+  $condition = (!is_admin() &&
+    is_post_type_archive("program") &&
+    $query->is_main_query() // not a custom query
+  );
+  if ($condition) {
+    // first parameter, what we want to change
+    // second parameter, value we want to give it.
+    $query->set("posts_per_page", -1);
+    $query->set("orderby", "title");
+    $query->set("order", "ASC");
+  }
+}
+
+function university_adjust_queries($query)
+{
+  override_event_archive_query($query);
+  override_program_archive_query($query);
 }
 
 add_action("pre_get_posts", "university_adjust_queries");
