@@ -26,6 +26,37 @@
         </div>
 
         <?php
+        $relatedProfessors = new WP_Query(array(
+            "posts_per_page" => -1, // -1 get all posts that meet the condition
+            "post_type" => "professor",
+            "orderby" => "title", // post_date is the default, rand for random, meta_value alongside meta_key to use custom fields
+            // meta_value for strings
+            "order" => "ASC", // default is DESC
+            "meta_query" => array(
+                array(
+                    "key" => "related_programs",
+                    "compare" => "LIKE",
+                    "value" => '"' . get_the_ID() . '"'
+                )
+            )
+        ));
+        ?>
+
+        <?php if ($relatedProfessors->have_posts()) : ?>
+            <hr class="section-break">
+            <h2 class="headline headline--medium"><?php echo get_the_title($program); ?> Professors</h2>
+        <?php endif; ?>
+
+        <ul class="link-list min-list">
+            <?php while ($relatedProfessors->have_posts()) : ?>
+                <?php $relatedProfessors->the_post(); ?>
+                <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+            <?php endwhile; ?>
+        </ul>
+
+        <?php wp_reset_postdata(); ?>
+
+        <?php
         $today = date("Ymd");
         $homepageEvents = new WP_Query(array(
             "posts_per_page" => 2, // -1 get all posts that meet the condition
@@ -51,8 +82,8 @@
         ?>
 
         <?php if ($homepageEvents->have_posts()) : ?>
-        <hr class="section-break">
-        <h2 class="headline headline--medium">Upcoming <?php echo get_the_title($program); ?> Events</h2>
+            <hr class="section-break">
+            <h2 class="headline headline--medium">Upcoming <?php echo get_the_title($program); ?> Events</h2>
         <?php endif; ?>
 
         <?php while ($homepageEvents->have_posts()) : ?>
