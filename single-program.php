@@ -49,6 +49,12 @@
             )
         ));
         ?>
+
+        <?php if ($homepageEvents->have_posts()) : ?>
+        <hr class="section-break">
+        <h2 class="headline headline--medium">Upcoming <?php echo get_the_title($program); ?> Events</h2>
+        <?php endif; ?>
+
         <?php while ($homepageEvents->have_posts()) : ?>
             <?php $homepageEvents->the_post(); ?>
             <div class="event-summary">
