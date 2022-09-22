@@ -17,7 +17,8 @@ function university_features()
     "professorLandscape", // name
     400, // width
     260, // heigth
-    true //crop
+    true // crop, also accepts an array arra("left", "top") to specify the type of croppping
+    // also use manual image crop (tomaz sita) plugin to more customized cropping
   );
   add_image_size("professorPortrait", 480, 650, true);
 }
